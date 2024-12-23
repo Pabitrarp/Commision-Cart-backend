@@ -1,0 +1,30 @@
+const mongoose=require("mongoose")
+const userschma=mongoose.Schema({
+    name:{
+        type:String,
+        required:true
+    },
+    email:{
+        type:String,
+        required:true
+    },
+    phone:{
+       type:Number,
+       required:true
+    },
+    password:{
+        type:String,
+        required:true
+    },
+    referId:{
+         type:String,
+         default:null
+    },
+    leftrefer:{type:mongoose.Types.ObjectId,default:null},
+    rightrefer:{type:mongoose.Types.ObjectId,default:null},
+    parentid:{type:mongoose.Types.ObjectId,default:null},
+    referearn:{type:Number,default:0},
+    commision:{type:Number,default:0},
+    address:[{type:mongoose.Types.ObjectId,default:null,ref:"addres"}]
+},{timestamps:true,versionKey:false});
+module.exports=mongoose.model("users",userschma);
