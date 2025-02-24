@@ -11,10 +11,12 @@ const ordersSchema = new mongoose.Schema({
         type: Object, 
         
     }],
-  razorpay_order_id: {
-        type: String, 
-        requied:true,
-    },
+//   razorpay_order_id: {
+//         type: String, 
+//         requied:true,
+//     },
+paymentproof:{type:String,},
+ts_id:{type:String,},
     payment_status: {type:String,default:"Pending"},
     address:{type:mongoose.Schema.Types.ObjectId,ref:"addres"} 
 }, { timestamps: true, versionKey: false }); 

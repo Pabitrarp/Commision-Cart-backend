@@ -53,6 +53,7 @@ const getallproducts = async (req, res) => {
                 }
             }
         ])
+      
         if (allproducts) {
             res.send(allproducts).status(200);
         } else {
