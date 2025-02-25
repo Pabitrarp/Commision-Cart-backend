@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(cors());
 const db=async()=>{
     try{
-        await mongoose.connect("mongodb+srv://user:Pabi@1234@user.zjsm9hu.mongodb.net/?retryWrites=true&w=majority&appName=user");
+    await mongoose.connect("mongodb+srv://Pabi:Pabi1234@user.zjsm9hu.mongodb.net/teaapp?retryWrites=true&w=majority&appName=user");
         console.log("connected");
         in_it();
     }catch(err){
