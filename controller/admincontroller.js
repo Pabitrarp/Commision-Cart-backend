@@ -121,33 +121,66 @@ const ordermodel=require("../models/ordersmodel")
   }
 
 /////distributes////
-const distributeCommission = async (id) => {
-    if (!id) return; // Base case: No parent to distribute to
+// const distributeCommission = async (id) => {
+//     if (!id) return; // Base case: No parent to distribute to
       
-    try {
-      console.log("parent");
-      const currentUser = await usermodel.findById(id);
-      if (!currentUser) return; 
-      currentUser.commision += 10; 
-      await currentUser.save(); 
-      await distributeCommission(currentUser.parentid);
-    } catch (error) {
-      console.error("Error distributing commission:", error);
-    }
-  };
+//     try {
+//       console.log("parent");
+//       const currentUser = await usermodel.findById(id);
+//       if (!currentUser) return; 
+//       currentUser.commision += 10; 
+//       await currentUser.save(); 
+//       await distributeCommission(currentUser.parentid);
+//     } catch (error) {
+//       console.error("Error distributing commission:", error);
+//     }
+//   };
 const paymentverifyandupdateorderstatus =async(req,res)=>{
   try {
     const {id}=req.body;
-    const order=await ordermodels.findByIdAndUpdate(id,{$set:{payment_status:"Verify",orderstatus:"Ready to print"}})
+    const order=await ordermodels.findByIdAndUpdate(id,{$set:{payment_status:"Verify",orderstatus:"Ready to print"}});
+    const user = await usermodel.findOne({ _id: order.user_id });
+    let currentUser = user;
+    let level = 1;
+    for (const element of order.products) {
+      const firstCommission = element.firstcommision * element.quantity;
+      const secondCommission = element.restofcommision * element.quantity;
+      console.log(firstCommission,secondCommission,element.quantity);
+      // ✅ Step 4: Pay First Commission to Direct Parent
+      if (currentUser?.parentid && level === 1) {
+        const parent = await usermodel.findById(currentUser.parentid);
 
-    const user = await usermodel.findOne({ _id: order.user_id })
-    if (user?.parentid) {
-      
-      const parent =await usermodel.findById(user.parentid);
-      parent.commision += 50;
-      await parent.save();
-      
-      await distributeCommission(parent?.parentid);
+        // ✅ Pay 100% First Commission to Direct Parent
+        await usermodel.updateOne(
+          { _id: parent._id },
+          { $inc: { commision: firstCommission } }
+        );
+
+        // ✅ Move to next parent
+        currentUser = parent;
+        level++;
+      }
+
+      // ✅ Step 5: Distribute Second Commission to Level 2-5
+      for (let i = 0; i < 4; i++) {
+        if (currentUser?.parentid) {
+          const parent = await usermodel.findById(currentUser.parentid);
+
+          // ✅ Split Second Commission Among 4 Uplines
+          
+
+          // ✅ Add commission to parent
+          await usermodel.updateOne(
+            { _id: parent._id },
+            { $inc: { commision: secondCommission } }
+          );
+
+          // ✅ Move to next parent
+          currentUser = parent;
+        } else {
+          break;
+        }
+      }
     }
     res.status(200).json({message:"Payment verify",user})
   } catch (error) {

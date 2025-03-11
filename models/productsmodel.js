@@ -33,6 +33,18 @@ const productSchema= mongoose.Schema({
         type:Number,
         require:true,
         default:1,
+    },
+    firstcommision:{
+        type:Number,
+        default:0,
+    },
+    restofcommision:{
+        type:Number,
+        default:0,
+    },
+    stuck:{
+      type:Number,
+      default:0,
     }
 },{timestamps:true,versionKey:false});
 module.exports=mongoose.model("products",productSchema);

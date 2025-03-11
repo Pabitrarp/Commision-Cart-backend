@@ -48,6 +48,9 @@ const getallproducts = async (req, res) => {
                             rating:"$rating",
                             grams:"$grams",
                             quantity:"$quantity",
+                            stuck:"$stuck",
+                            firstcommision:"$firstcommision",
+                            restofcommision:"$restofcommision",
                         }
                     }
                 }

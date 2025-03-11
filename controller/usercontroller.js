@@ -3,6 +3,7 @@ const usermodel = require("../models/usermodel")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken");
 const addressmodel=require("../models/address")
+const withdralreqmodel=require("../models/withdralreq");
 async function addpeople(userid) {
   try {
     let currentuser = await usermodel.findOne({ _id: userid });
@@ -63,7 +64,7 @@ const signup = async (req, res) => {
           const user = await usermodel.create({ name: Userdetails.Name, email: Userdetails.Email, password: Userdetails.Password, phone: Userdetails.Number, parentid: parent._id,referId:userreferid})
           const token=jwt.sign({Email:Userdetails.Email,Phone:Userdetails.Number,id:user._id},process.env.SECREATE_KEY)
           parent.rightrefer = user._id;
-          parent.referearn+=25;
+          parent.referearn+=20;
           await parent.save();
           res.status(200).json({ message: "user created succesfully",token ,user})
         }
@@ -209,4 +210,15 @@ const removeadd=async(req,res)=>{
   }
  }
 
-module.exports = { signup, signin, alluser,getuser,addaddres,getaddres,removeadd,userwallet};        
+const createwithdralreq=async(req,res)=>{
+  try {
+     const {Wallet,referammount,upi,commisionammount}=req.body;
+     const response= await withdralreqmodel.create({user:{user_id:Wallet._id,referammount:Wallet.referearn,commisionammount:Wallet.commision,email:Wallet.email},referammount,upi,commisionammount});
+     res.status(201).json({message:"withdral amount request successfully submitted"});
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({error:error.message});
+  }
+}
+
+module.exports = { signup, signin, alluser,getuser,addaddres,getaddres,removeadd,userwallet,createwithdralreq};        

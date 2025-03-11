@@ -7,6 +7,7 @@ const crypto = require("crypto");
 const usermodel = require("../models/usermodel.js");
 const path = require("path");
 const ordermodels = require("../models/ordersmodel.js");
+const productsmodel=require("../models/productsmodel.js");
 
 //get all order//
 const getall_orders_of_user=async(req,res)=>{
@@ -108,11 +109,15 @@ const veryfyPayment=async(req,res)=>{
 
 const createorderforscanner=async(req,res)=>{
   const {products,id,add,amount,tsid}=req.body;
-  
   const paymentproof= req.file ? `/uploads/${req.file.filename}` : null
-
    try {
     const order=await ordermodels.create({user_id:id,address:add,total_amount:amount,products:JSON.parse(products),payment_status:"pending",paymentproof,ts_id:tsid})
+    for (const element of JSON.parse(products)) {
+      await productsmodel.findByIdAndUpdate(
+        element.id,
+        { $inc: { stuck: -element.quantity } }
+      );
+    }
     res.status(201).json({ message: "Order created successfully", order})
    } catch (error) {
     res.status(500).json({ success: false, error: error });

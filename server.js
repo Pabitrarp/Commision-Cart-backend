@@ -1,6 +1,7 @@
 const mongoose=require("mongoose");
 const express=require("express");
 const path=require("path");
+const usermodel=require("./models/usermodel.js")
 const userrouter=require("./routes/userroutes");
 const productsroute=require("./routes/productsroutes")
 const catagory=require('./models/catagorymodel');
@@ -8,6 +9,7 @@ const orderroute=require("./routes/orderroutes.js")
 const adminroute=require("./routes/adminroutes.js")
 const cors = require('cors');
 const adminmodel = require("./models/adminmodel.js");
+ const products=require("./models/productsmodel.js")
 const app=express();
 app.use(express.json()); 
 app.use(cors());
@@ -15,7 +17,10 @@ const db=async()=>{
     try{
     await mongoose.connect("mongodb+srv://Pabi:Pabi1234@user.zjsm9hu.mongodb.net/teaapp?retryWrites=true&w=majority&appName=user");
         console.log("connected");
-        in_it();
+         in_it();
+       await usermodel.updateMany({},{$set:{isActive:false}});
+       await products.updateMany({},{$set:{firstcommision:0,restofcommision:0,stuck:0}}); 
+       
     }catch(err){
         console.log(err)
     } 

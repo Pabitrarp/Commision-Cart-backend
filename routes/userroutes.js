@@ -10,4 +10,5 @@ router.post("/addaddress",usercontroller.addaddres);
 router.post("/getaddress",usercontroller.getaddres);
 router.post("/deleteadd",usercontroller.removeadd);
 router.post("/wallet",usercontroller.userwallet);
+router.post("/withdralreq",usercontroller.createwithdralreq);
 module.exports=router;
