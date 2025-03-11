@@ -18,8 +18,7 @@ const db=async()=>{
     await mongoose.connect("mongodb+srv://Pabi:Pabi1234@user.zjsm9hu.mongodb.net/teaapp?retryWrites=true&w=majority&appName=user");
         console.log("connected");
          in_it();
-       await usermodel.updateMany({},{$set:{isActive:false}});
-       await products.updateMany({},{$set:{firstcommision:0,restofcommision:0,stuck:0}}); 
+
        
     }catch(err){
         console.log(err)
